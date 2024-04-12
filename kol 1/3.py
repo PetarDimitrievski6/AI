@@ -450,8 +450,42 @@ def uniform_cost_search(problem):
     return graph_search(problem, PriorityQueue(min, lambda a: a.path_cost))
 
 
+class Towers(Problem):
 
+    def __init__(self, initial, goal=None, count=0):
+        super().__init__(initial, goal)
+        self.count = count
+
+    def successor(self, state):
+        successors = dict()
+        for i in range(self.count):
+            for j in range(self.count):
+                if i == j or state[i] == ():
+                    continue
+                if state[j] == () or state[i][-1] <= state[j][-1]:
+                    temp_list = list(state)
+                    temp_list_i = list(state[i])
+                    temp_list_j = list(state[j])
+                    temp_list_i.remove(state[i][-1])
+                    temp_list_j.append(state[i][-1])
+                    temp_list[i] = tuple(temp_list_i)
+                    temp_list[j] = tuple(temp_list_j)
+                    successors[f'MOVE TOP BLOCK FROM PILLAR {i + 1} TO PILLAR {j + 1}'] = tuple(temp_list)
+        return successors
+
+    def actions(self, state):
+        return self.successor(state).keys()
+
+    def result(self, state, action):
+        return self.successor(state)[action]
 
 
 if __name__ == "__main__":
-    pass
+    first = input().split(';')
+    last = input().split(';')
+    initial = tuple([tuple(map(int, t.split(','))) if t != '' else () for t in first])
+    goal = tuple([tuple(map(int, t.split(','))) if t != '' else () for t in last])
+    problem = Towers(initial, goal, len(initial))
+    sol = breadth_first_graph_search(problem).solution()
+    print(f"Number of action {len(sol)}")
+    print(sol)
