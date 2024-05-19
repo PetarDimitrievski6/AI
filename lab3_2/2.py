@@ -29,3 +29,4 @@ if __name__ == '__main__':
     entry_class = classifier.predict([entry])[0]
     print(int(entry_class))
     print(classifier.predict_proba([entry]))
+
